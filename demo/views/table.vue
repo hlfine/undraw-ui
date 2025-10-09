@@ -1,5 +1,5 @@
 <template>
-  <u-table ref="tableRef" :table="table" max-height="800">
+  <u-table ref="tableRef" :table="table" max-height="800" >
     <template #table-role="{ row, column }">
       <el-radio-group v-model="row.role">
         <el-radio value="用户" size="small">用户</el-radio>
@@ -93,7 +93,6 @@ async function submit() {
     }
   })
 }
-
 </script>
 
 <style lang="scss" scoped></style>

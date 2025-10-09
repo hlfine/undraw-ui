@@ -50,7 +50,7 @@ const comments: CommentApi[] = [
     reply: {
       total: 1,
       list: [
-      {
+        {
           id: '11',
           parentId: 1,
           uid: '1',
@@ -69,7 +69,7 @@ const comments: CommentApi[] = [
     parentId: null,
     uid: '3',
     content: '国破山河在，城春草木深。<br>感时花溅泪，恨别鸟惊心。<br>烽火连三月，家书抵万金。<br>白头搔更短，浑欲不胜簪。',
-    createTime: new Time().add(-5, 'day'),
+    createTime: new Time().add(-5, 'hour'),
     user: {
       username: '杜甫 [唐代]',
       avatar: 'https://static.juzicon.com/images/image-180327173755-IELJ.jpg'

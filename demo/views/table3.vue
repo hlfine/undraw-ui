@@ -1,5 +1,5 @@
 <template>
-  <u-table ref="tableRef" :table="table" max-height="800"  @sort-change="sortChange"></u-table>
+  <u-table ref="tableRef" :table="table" max-height="800" @sort-change="sortChange"></u-table>
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
@@ -57,8 +57,7 @@ const table = reactive<TableApi>({
       prop: 'address'
     }
   ],
-  data: [],
-  total: '5'
+  data: []
 })
 const tableRef = ref()
 
@@ -68,28 +67,42 @@ function sortChange(val: any) {
 
 const data = [
   {
-    date: '2016-05-03',
-    name: 'Tom',
-    tag: 'Tag 1',
-    address: 'No. 189, Grove St, Los Angeles'
-  },
-  {
+    id: 1,
     date: '2016-05-02',
-    name: 'Tom',
-    tag: 'Tag 2',
-    address: 'No. 189, Grove St, Los Angeles'
+    name: 'wangxiaohu',
+    address: 'No. 189, Grove St, Los Angeles',
   },
   {
+    id: 2,
     date: '2016-05-04',
-    name: 'Tom',
-    tag: 'Tag 3',
-    address: 'No. 189, Grove St, Los Angeles'
+    name: 'wangxiaohu',
+    address: 'No. 189, Grove St, Los Angeles',
   },
   {
+    id: 3,
     date: '2016-05-01',
-    name: 'Tom testttttttttttttttttttttt',
-    tag: 'Tag 4',
-    address: 'No. 189, Grove St, Los Angeles'
+    name: 'wangxiaohu',
+    address: 'No. 189, Grove St, Los Angeles',
+    children: [
+      {
+        id: 31,
+        date: '2016-05-01',
+        name: 'wangxiaohu',
+        address: 'No. 189, Grove St, Los Angeles',
+      },
+      {
+        id: 32,
+        date: '2016-05-01',
+        name: 'wangxiaohu',
+        address: 'No. 189, Grove St, Los Angeles',
+      }
+    ]
+  },
+  {
+    id: 4,
+    date: '2016-05-03',
+    name: 'wangxiaohu',
+    address: 'No. 189, Grove St, Los Angeles',
   }
 ]
 

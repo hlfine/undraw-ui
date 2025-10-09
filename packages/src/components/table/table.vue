@@ -4,7 +4,7 @@
       <el-table
         ref="tableRef"
         v-loading="state.loading"
-        :data="table.data"
+        v-bind="table"
         :max-height="maxHeight"
         stripe
         border
@@ -16,6 +16,7 @@
         @expand-change="expandChange"
         @selection-change="handleSelectionChange"
         @sort-change="sortChange"
+        @row-click="(row: any, column: any, event: Event) => ($emit('rowClick', row, column, event))"
         :default-sort="state.defaultSort"
       >
         <template v-for="(item, index) in table.columns" :key="index">
@@ -39,7 +40,7 @@
           <!-- operation -->
           <el-table-column v-else-if="item.type == 'operation'" fixed="right" :align="item.align" label="操作" :width="item.width">
             <template #default="scope">
-              <el-link v-if="crud && crud.update" :underline="false" type="primary" style="font-size: 12px; margin-right: 5px" link @click="edit(cloneDeep(scope.row))">
+              <el-link v-if="crud && crud.update" :disabled="crud.disable.update" :underline="false" type="primary" style="font-size: 12px; margin-right: 5px" link @click="edit(cloneDeep(scope.row))">
                 <u-icon size="12px">
                   <svg data-v-c4997ac3="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
                     <path
@@ -50,7 +51,7 @@
                 </u-icon>
                 <span>修改</span>
               </el-link>
-              <el-link v-if="crud && crud.remove" :underline="false" type="primary" :loading="state.btnLoading" style="font-size: 12px; margin: 0" link @click="remove([scope.row])">
+              <el-link v-if="crud && crud.remove" :disabled="crud.disable.remove" :underline="false" type="primary" :loading="state.btnLoading" style="font-size: 12px; margin: 0" link @click="remove([scope.row])">
                 <u-icon size="12px">
                   <svg data-v-c4997ac3="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
                     <path
@@ -76,7 +77,7 @@
                 @blur="onInputBlur(scope)"
               />
               <!-- 判断为显示状态 -->
-              <div v-else class="row-content" :class="{ overflow: item.overflow }" style="width: 100%" @dblclick="dbClickCell(scope)">
+              <div v-else class="row-content" :class="{ overflow: item.overflow }" style="width: 100%; display: inline;" @dblclick="dbClickCell(scope)">
                 {{ scope.row[item.prop || ''] }}
               </div>
             </template>
@@ -98,8 +99,8 @@
       layout="total, sizes, prev, pager, next, jumper"
       small
       :hide-on-single-page="table.single"
-      :total="total"
-      :page-sizes="[5, 10, 20, 40]"
+      :total="parseInt(total as any)"
+      :page-sizes="[5, 10, 50, 100]"
       :page-size="state.size"
       background
       class="flex flex-wrap"
@@ -139,7 +140,7 @@ export interface TableItemApi {
   headerAlign?: 'left' | 'center' | 'right' // 表头对齐方式
   align?: 'left' | 'center' | 'right' // 对齐方式
   fixed?: 'left' | 'right' | false
-  type?: 'basic' | 'index' | 'selection' | 'img' | 'row-add' | 'custom' | 'operation' | 'component' // 列的类型
+  type?: 'basic' | 'index' | 'selection' | 'img' | 'row-add' | 'operation' | 'component' | 'custom' // 列的类型
   editor?: boolean // 是否可编辑
   overflow?: boolean // 是否溢出隐藏且提示工具
   required?: boolean // 是否必填
@@ -154,13 +155,14 @@ export interface TableApi {
   columns: TableItemApi[] // 表格项
   sort?: 'custom' // 排序方式 自定义
   data: {}[] // 表格数据
-  total?: number
+  total?: number | string
   size?: number
   single?: boolean
   number?: string
   minWidth?: number // 列的最小宽度
   refresh?: (done: () => void, current: number, size: number, sort?: any) => void // 刷新列表
   rowForm?: any
+  [key: string]: any
 }
 
 export interface Props {
@@ -220,6 +222,7 @@ const emit = defineEmits<{
   onSelection: [val: any]
   inputBlur: [val: any]
   sortChange: [val: any]
+  rowClick: [row: any, column: any, event: Event]
 }>()
 
 // --> load

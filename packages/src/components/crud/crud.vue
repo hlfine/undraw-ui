@@ -5,7 +5,7 @@
     </div>
     <div ref="toolRef" class="tool">
       <div>
-        <el-button v-if="crud.save" class="u-small" type="primary" @click="save">
+        <el-button v-if="crud.save" :disabled="crud.disable.save" class="u-small" type="primary" @click="save">
           <template #icon>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
               <path fill="currentColor" d="M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64h352z"></path>
@@ -13,7 +13,7 @@
           </template>
           新增
         </el-button>
-        <el-button v-if="crud.update" class="u-small" :disabled="state.selections?.length != 1" type="success" @click="update(state.selections[0])">
+        <el-button v-if="crud.update" class="u-small" :disabled="state.selections?.length != 1 || crud.disable.update" type="success" @click="update(state.selections[0])">
           <template #icon>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
               <path
@@ -24,7 +24,7 @@
           </template>
           修改
         </el-button>
-        <el-button v-if="crud.remove" class="u-small" :loading="btnLoading" :disabled="state.selections?.length == 0" type="danger" @click="remove(state.selections)">
+        <el-button v-if="crud.remove" class="u-small" :loading="btnLoading" :disabled="state.selections?.length == 0 || crud.disable.remove" type="danger" @click="remove(state.selections)">
           <template #icon>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
               <path
@@ -64,7 +64,15 @@
         </el-tooltip>
       </div>
     </div>
-    <u-table ref="tableRef" :table="table" :max-height="maxHeight" @on-selection="val => (state.selections = val)" @input-blur="val => $emit('inputBlur', val)" @sort-change="sortChange">
+    <u-table
+      ref="tableRef"
+      :table="table"
+      :max-height="maxHeight"
+      @on-selection="val => (state.selections = val)"
+      @input-blur="val => $emit('inputBlur', val)"
+      @sort-change="sortChange"
+      @row-click="(row: any, column: any, event: Event) => ($emit('rowClick', row, column, event))"
+    >
       <template v-for="(item, index) in table.columns" :key="index" #[`table-${item.prop}`]="v">
         <slot :name="`table-${item.prop}`" v-bind="v"></slot>
       </template>
@@ -87,7 +95,7 @@
 </template>
 <script setup lang="ts">
 import { nextTick, onMounted, provide, reactive, ref } from 'vue'
-import { UTable, UGroup, UDialog, FormApi, TableApi, debounce, throttle } from 'undraw-ui'
+import { UTable, UGroup, UDialog, FormApi, TableApi, debounce, throttle, mergeObject } from 'undraw-ui'
 import { ElMessageBox, ElButton, ElTooltip } from 'element-plus'
 import { cloneDeep } from '~/util'
 
@@ -98,9 +106,10 @@ defineOptions({
 export interface CrudApi {
   beforeSave?: () => void // 添加前
   beforeUpdate?: (val: any) => void // 修改前
-  save?: (val: any, done: () => void) => void // 添加
-  update?: (val: any, done: () => void) => void // 修改
-  remove?: (val: any[], done: () => void) => void // 删除
+  save?: (val: any, done: (val?: boolean) => void) => void // 添加
+  update?: (val: any, done: (val?: boolean) => void) => void // 修改
+  remove?: (val: any[], done: (val?: boolean) => void) => void // 删除
+  disable?: any
 }
 
 interface Props {
@@ -111,7 +120,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  crud: () => ({})
+  crud: () => ({}),
+  form: {} as any
 })
 
 const searchVisible = ref(true)
@@ -132,14 +142,17 @@ const groupRef = ref()
 const emit = defineEmits<{
   inputBlur: [val: any]
   sortChange: [val: any[]]
+  rowClick: [row: any, column: any, event: Event]
 }>()
 
 function save() {
   let crud = props.crud
   state.title = '新增'
   visible.form = true
+  state.btnLoading = false
   props.form!.data = {}
   nextTick(() => {
+    props.form.type = 'save'
     crud.beforeSave && crud.beforeSave()
     groupRef.value.resetFields()
   })
@@ -149,8 +162,10 @@ const update = (val: any) => {
   let crud = props.crud
   state.title = '修改'
   visible.form = true
+  state.btnLoading = false
   nextTick(() => {
     props.form!.data = cloneDeep(val)
+    props.form.type = 'update'
     crud.beforeUpdate && crud.beforeUpdate(val)
     groupRef.value.resetFields()
   })
@@ -178,6 +193,7 @@ const submit = throttle(() => {
   groupRef.value.validate((valid: boolean) => {
     if (valid) {
       let crud = props.crud
+      state.btnLoading = true
       if (state.title == '新增') {
         crud.save && crud.save(props.form?.data, refresh)
       } else if (state.title == '修改') {
@@ -187,9 +203,12 @@ const submit = throttle(() => {
   })
 })
 
-const refresh = throttle(() => {
-  visible.form = false
-  tableRef.value?.reload()
+const refresh = throttle((val = true) => {
+  state.btnLoading = false
+  if (val) {
+    visible.form = false
+    tableRef.value?.reload()
+  }
 })
 
 function sortChange(val: any) {
@@ -202,13 +221,21 @@ function sortChange(val: any) {
 const toolRef = ref()
 const tableHeight = ref()
 
+function init() {
+  mergeObject(props.crud, {
+    disable: {}
+  })
+}
+init()
+
 provide('u-crud', props.crud)
 onMounted(() => {
   tableHeight.value = toolRef.value.clientHeight
 })
 
 defineExpose({
-  refresh
+  refresh,
+  data: state
 })
 </script>
 

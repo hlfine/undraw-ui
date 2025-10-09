@@ -29,6 +29,7 @@
   </el-dialog>
 </template>
 
+
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { ElDialog, ElScrollbar } from 'element-plus'
@@ -48,7 +49,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  closeOnClickModal: true
+  closeOnClickModal: false
 })
 
 const visible = ref(false)

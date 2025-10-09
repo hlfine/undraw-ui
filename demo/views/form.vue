@@ -22,23 +22,23 @@ import { Time } from '~/util'
 
 const options = [
   {
-    value: 'Option1',
+    value: '1',
     label: 'Option1'
   },
   {
-    value: 'Option2',
+    value: '2',
     label: 'Option2'
   },
   {
-    value: 'Option3',
+    value: '3',
     label: 'Option3'
   },
   {
-    value: 'Option4',
+    value: '4',
     label: 'Option4'
   },
   {
-    value: 'Option5',
+    value: '5',
     label: 'Option5'
   }
 ]
@@ -64,7 +64,6 @@ const form = reactive<FormApi>({
     {
       label: '性别',
       prop: 'sex',
-      value: '',
       rule: [{ required: true, message: '性别不能为空', trigger: 'blur' }],
       component: {
         name: 'el-select',
@@ -74,7 +73,15 @@ const form = reactive<FormApi>({
         reserveKeyword: false,
         multiple: true,
         collapseTags: true,
-        options: [{label: '男', value: 1}, {label: '女', value: 0}]
+        options: [
+          { label: '男', value: 1 },
+          { label: '女', value: 0 }
+        ]
+      },
+      event: {
+        change: (val: any) => {
+          console.log(val)
+        }
       }
     },
     {
@@ -109,7 +116,6 @@ const form = reactive<FormApi>({
     {
       label: '关键词',
       prop: 'search',
-      value: '',
       component: {
         name: 'u-search2',
         remoteSearch: (val: string, done: (arg: any[]) => void) => {
@@ -124,11 +130,17 @@ const form = reactive<FormApi>({
       label: '选项',
       prop: 'options',
       width: 310,
+      value: '2',
       component: {
         name: 'el-select',
-        multiple: true,
+        options: [
+          {
+            value: '2',
+            label: 'Option2'
+          }
+        ],
         collapseTags: true,
-        remoteSearch: (val: string, done: (arg: any[]) => void) => { 
+        remoteSearch: (val: string, done: (arg: any[]) => void) => {
           setTimeout(() => {
             done(options.filter(e => e.label.includes(val)))
           }, 200)
@@ -139,11 +151,14 @@ const form = reactive<FormApi>({
       label: '校验',
       prop: 'rule',
       width: 300,
-      rule: { trigger: 'blur', validator: (rule: any, value: any, done: any) => {
-        form.data.rule = 1
-        console.log('test')
-        done()
-      }},
+      rule: {
+        trigger: 'blur',
+        validator: (rule: any, value: any, done: any) => {
+          form.data.rule = 1
+          console.log('test')
+          done()
+        }
+      },
       component: {
         name: 'el-input'
       }
@@ -151,13 +166,17 @@ const form = reactive<FormApi>({
   ]
 })
 
-watch(() => form.data.allUser, val => {
-  form.items.forEach(v => {
-    if (v.prop == 'options') {
-      v.hide = val
-    }
-  })
-}, {immediate: true})
+watch(
+  () => form.data.allUser,
+  val => {
+    form.items.forEach(v => {
+      if (v.prop == 'options') {
+        v.hide = val
+      }
+    })
+  },
+  { immediate: true }
+)
 
 const states = [
   'Alabama',
@@ -214,6 +233,32 @@ const states = [
 
 const formRef = ref()
 
+function covnert(data: any, obj: any[]) {
+  obj.forEach(e => {
+    let arr = (e.key as string).split(',')
+    let value = data[arr[0]]
+    let o = e.options.find((e2: any) => e2.value == value)
+    data[arr[1]] = o?.label
+  })
+}
+
+let obj = { sex: 0, status: 1 }
+let list = [
+  { label: '男', value: 1 },
+  { label: '女', value: 0 }
+]
+
+let list2 = [
+  { label: '开启', value: 1 },
+  { label: '禁用', value: 0 }
+]
+
+covnert(obj, [
+  { key: 'sex,sexName', options: list },
+  { key: 'status,statusName', options: list2 }
+])
+console.log(obj)
+
 function reset() {
   formRef.value.resetFields()
 }
@@ -223,7 +268,7 @@ async function submit() {
     if (valid) {
       console.log(form.data)
     } else {
-      console.log(valid)
+      console.log(form.data)
     }
   })
 }

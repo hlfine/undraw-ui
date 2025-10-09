@@ -1,40 +1,28 @@
 <template>
-  <div v-click-outside:[mentionRef]="() => (state.showMention = false)" class="u-editor" :class="{ active: state.active }">
-    <div
-      ref="editorRef"
-      class="rich-input"
-      contenteditable="true"
-      :placeholder="placeholder"
-      @focus="onFocus"
-      @input="onInput"
-      @blur="onBlur"
-      @keydown="keyDown"
-      @paste="pasteFn"
-      @mouseup="onMouseup"
-      @keydown.up.prevent="moveSelection(-1)"
-      @keydown.down.prevent="moveSelection(1)"
-      v-html="text"
-    ></div>
-    <div ref="imageRef" class="image-preview-box">
-      <div v-for="(url, index) in imgList" :key="index" class="image-preview">
-        <img :src="url" alt="" />
-        <div class="clean-btn" @click="removeImg(index)">
-          <svg data-v-48a7e3c5="" data-v-7c7c7498="" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="12" height="12" rx="2" fill="#86909C"></rect>
-            <path
-              data-v-48a7e3c5=""
-              data-v-7c7c7498=""
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M5.98095 5.49307L8.22012 3.25389C8.28521 3.18881 8.39074 3.18881 8.45582 3.25389L8.69153 3.4896C8.75661 3.55468 8.75661 3.66021 8.69153 3.7253L6.45235 5.96447L8.69153 8.20364C8.75661 8.26873 8.75661 8.37426 8.69153 8.43934L8.45582 8.67505C8.39074 8.74013 8.28521 8.74013 8.22012 8.67505L5.98095 6.43587L3.74178 8.67505C3.67669 8.74013 3.57116 8.74013 3.50608 8.67505L3.27037 8.43934C3.20529 8.37426 3.20529 8.26873 3.27037 8.20364L5.50954 5.96447L3.27037 3.7253C3.20529 3.66021 3.20529 3.55468 3.27037 3.4896L3.50608 3.25389C3.57116 3.18881 3.67669 3.18881 3.74178 3.25389L5.98095 5.49307Z"
-              fill="white"
-            ></path>
-          </svg>
+  <div v-click-outside:[mentionRef]="() => (state.showMention = false)" class="u-editor"
+    :class="{ active: state.active }">
+    <div class="content">
+      <div ref="editorRef" class="rich-input" contenteditable="true" :placeholder="placeholder" @focus="onFocus"
+        @input="onInput" @blur="onBlur" @keydown="keyDown" @paste="pasteFn" @mouseup="onMouseup"
+        @keydown.up.prevent="moveSelection(-1)" @keydown.down.prevent="moveSelection(1)" v-html="text"></div>
+      <div ref="imageRef" class="image-preview-box">
+        <div v-for="(url, index) in imgList" :key="index" class="image-preview">
+          <img :src="url" alt="" />
+          <div class="clean-btn" @click="removeImg(index)">
+            <svg data-v-48a7e3c5="" data-v-7c7c7498="" width="12" height="12" viewBox="0 0 12 12" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <rect width="12" height="12" rx="2" fill="#86909C"></rect>
+              <path data-v-48a7e3c5="" data-v-7c7c7498="" fill-rule="evenodd" clip-rule="evenodd"
+                d="M5.98095 5.49307L8.22012 3.25389C8.28521 3.18881 8.39074 3.18881 8.45582 3.25389L8.69153 3.4896C8.75661 3.55468 8.75661 3.66021 8.69153 3.7253L6.45235 5.96447L8.69153 8.20364C8.75661 8.26873 8.75661 8.37426 8.69153 8.43934L8.45582 8.67505C8.39074 8.74013 8.28521 8.74013 8.22012 8.67505L5.98095 6.43587L3.74178 8.67505C3.67669 8.74013 3.57116 8.74013 3.50608 8.67505L3.27037 8.43934C3.20529 8.37426 3.20529 8.26873 3.27037 8.20364L5.50954 5.96447L3.27037 3.7253C3.20529 3.66021 3.20529 3.55468 3.27037 3.4896L3.50608 3.25389C3.57116 3.18881 3.67669 3.18881 3.74178 3.25389L5.98095 5.49307Z"
+                fill="white"></path>
+            </svg>
+          </div>
         </div>
       </div>
     </div>
-    <slot name="footer"></slot>
-    <Mention v-show="state.showMention" ref="mentionRef" v-bind="mention" :show-mention="state.showMention" @select="onSelect" />
+    <slot name="footer" @click.stop=""></slot>
+    <Mention v-show="state.showMention" ref="mentionRef" v-bind="mention" :show-mention="state.showMention"
+      @select="onSelect" />
   </div>
 </template>
 <script setup lang="ts">
@@ -124,8 +112,7 @@ function onFocus(event: FocusEvent) {
 
 function focus() {
   nextTick(() => {
-    editorRef.value?.focus()
-    range.value = getRange()
+    range.value = getRange(editorRef.value)
   })
 }
 
@@ -308,8 +295,8 @@ function addText(val: string) {
       let textNode = ran.startContainer
       // 获取光标位置
       var rangeStartOffset = ran.startOffset
-      // 文本节点在光标位置处插入新的表情内容
-      ;(textNode as Text).insertData(rangeStartOffset, val)
+        // 文本节点在光标位置处插入新的表情内容
+        ; (textNode as Text).insertData(rangeStartOffset, val)
       // 光标移动到到原来的位置加上新内容的长度
       ran.setStart(textNode, rangeStartOffset + val.length)
       // 光标开始和光标结束重叠
@@ -351,7 +338,7 @@ function onSelect(val: any) {
       ran.setStart(at.focusNode as Node, at.index)
       ran.setEnd(at.focusNode as Node, at.index + 1 + at.searchStr.length)
     }
-   
+
     // 删除输入的 @关键字
     ran.deleteContents()
     // 创建元素节点
@@ -363,7 +350,7 @@ function onSelect(val: any) {
     spanNode.style.whiteSpace = 'pre-wrap'
     newNode.after(spanNode)
     ran.setStartAfter(spanNode)
-   
+
     selection.removeAllRanges()
     selection.addRange(ran)
     // 关闭弹框
@@ -392,8 +379,6 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-@use './style/editor.scss' with (
-  $minHeight: v-bind(minHeight),
-  $padding: v-bind(padding)
-);
+@use './style/editor.scss' with ($minHeight: v-bind(minHeight),
+  $padding: v-bind(padding));
 </style>

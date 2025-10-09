@@ -97,18 +97,24 @@ export const toPx = (val: any) => {
   }
 }
 
-export function mergeObject(target: any, source: any, cover=false) {
+/**
+ * 合并元素 source + target => target
+ * @param target 最终合并目标值
+ * @param source 需要合并选项值
+ * @param cover 是否覆盖; 默认值: false
+ */
+export function mergeObject(target: any, source: any, cover = false) {
   for (const key in source) {
-    if (source.hasOwnProperty(key)) {  
-      // 如果 target 中没有这个属性，直接添加  
-      if (!target.hasOwnProperty(key)) {  
+    if (source.hasOwnProperty(key)) {
+      // 如果 target 中没有这个属性，直接添加
+      if (!target.hasOwnProperty(key)) {
         target[key] = source[key]
       } else {
         if (cover) {
           target[key] = source[key]
         } else {
-          // 如果 target 中有这个属性，且两者都是对象，则递归合并  
-          if (isObject(source[key]) && (isObject(target[key]))) {
+          // 如果 target 中有这个属性，且两者都是对象，则递归合并
+          if (isObject(source[key]) && isObject(target[key])) {
             mergeObject(target[key], source[key])
           }
         }

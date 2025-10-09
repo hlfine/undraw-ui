@@ -1,12 +1,14 @@
 type UnitType = 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second' | 'ms'
-export class Time {
+export class Time extends Date {
   public value: Date = new Date()
 
   constructor(...params: any) {
+    // @ts-ignore
+    super(...params)
     //@ts-ignore
     this.value = formatTime(new Date(...params))
   }
-  
+
   add(n: number, unit: UnitType) {
     let date = new Date(this.value)
     const table = {
@@ -25,7 +27,7 @@ export class Time {
       // @ts-ignore
       date = new Date(date - 0 + table[unit] * n)
     }
-    return formatTime(date)
+    return new Time(date)
   }
 
   /**
@@ -39,6 +41,29 @@ export class Time {
 
   toString() {
     return `${this.value}`
+  }
+
+  /**
+   * 返回当月第一天日期
+   * @param format 
+   * @returns 
+   */
+  getFirstDayOfMonth() {
+    var date = new Date(this.value)
+    var year = date.getFullYear()
+    var month = date.getMonth()
+    return new Time(year, month, 1).format('y-m-d')
+  }
+
+  /**
+   * 返回当月最后一天日期
+   * @returns 
+   */
+  getLastDayOfMonth() {
+    var date = new Date(this.value)
+    var year = date.getFullYear()
+    var month = date.getMonth()
+    return new Time(year, month + 1, 0).format('y-m-d')
   }
 }
 
@@ -56,40 +81,26 @@ export function humanTime(datetime: any) {
     outTime = new Date(parseInt(datetime))
   }
 
-  if (time.getTime() < outTime.getTime() || time.getFullYear() != outTime.getFullYear()) {
-    return formatTime(outTime, 'y-m-d h:i')
-  }
-
-  if (time.getMonth() != outTime.getMonth()) {
-    return formatTime(outTime, 'm-d h:i')
+  if (time.getFullYear() != outTime.getFullYear()) {
+    return formatTime(outTime, 'y-m-d')
   }
 
   if (time.getDate() != outTime.getDate()) {
-    let day = outTime.getDate() - time.getDate()
-    if (day == -1) {
-      return formatTime(outTime, '昨天 h:i')
-    }
-
-    if (day == -2) {
-      return formatTime(outTime, '前天 h:i')
-    }
-
-    return formatTime(outTime, 'm-d h:i')
+    return formatTime(outTime, 'm-d')
   }
 
-  let diff = time.getTime() - outTime.getTime()
-
-  if (time.getHours() != outTime.getHours() || diff > 30 * 60 * 1000) {
-    return formatTime(outTime, 'h:i')
+  let hours = time.getHours() - outTime.getHours()
+  if (time.getHours() != outTime.getHours()) {
+    return `${hours} 小时前`
   }
 
-  let minutes = outTime.getMinutes() - time.getMinutes()
+  let minutes = time.getMinutes() - outTime.getMinutes()
   if (minutes == 0) {
     return '刚刚'
   }
 
   minutes = Math.abs(minutes)
-  return `${minutes}分钟前`
+  return `${minutes} 分钟前`
 }
 
 /**

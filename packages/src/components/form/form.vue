@@ -4,14 +4,14 @@
       <template v-for="(item, index) in form.items" :key="index">
         <el-form-item
           v-if="!item.hide"
+          v-show="groupType(item.group)"
+          v-loading="item.loading"
           :label="item.label"
           :prop="item.prop"
           :class="`form-${item.prop}`"
           :rules="item.required ? { required: true, message: `${item.label}不能为空`, trigger: 'change' } : item.rule"
           :label-width="item.labelWidth"
           :style="{ width: toPx(item.width), position: 'relative' }"
-          v-loading="item.loading"
-          v-show="groupType(item.group)"
         >
           <Item :item="item" :data="form.data">
             <template v-if="!item.component" #[`form-${item.prop}`]="v">
@@ -53,11 +53,13 @@ export interface FormItemApi {
   width?: number // 表单行宽度
   labelWidth?: number // 表单行标签的宽度
   component?: ComponentApi // 组件
+  event?: any // 事件
   hide?: boolean // 是否隐藏
   required?: boolean // 是否必填
   rule?: Arrayable<FormItemRule> // 验证规则
   group?: string // 分组显示
   loading?: boolean // 加载
+  clearable?: boolean // 清空
 }
 
 interface GroupApi {
@@ -73,6 +75,7 @@ export interface FormApi {
   labelWidth?: number
   labelPosition?: 'right' | 'left' | 'top' // 标签文本对齐方式
   group?: GroupApi // 分组
+  type?: 'save' | 'update'
 }
 
 interface Props {
@@ -138,7 +141,7 @@ function validate(callback: (vaild: boolean, fields: any) => void) {
 
 defineExpose({
   validate: validate,
-  resetFields: () => formRef.value?.resetFields(),
+  resetFields: () => formRef.value?.resetFields()
 })
 </script>
 

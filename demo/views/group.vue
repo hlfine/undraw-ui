@@ -14,15 +14,14 @@
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { FormApi } from '~/components';
+import { FormApi } from '~/components'
 import { Time } from '~/util'
 
 const form = reactive<FormApi>({
-  data: {
-  },
+  data: {},
   group: {
-    type: 'collapse',
-    labels: ['基础信息', '详细信息'],
+    type: 'tabs',
+    labels: ['基础信息', '详细信息']
   },
   items: [
     {
@@ -74,7 +73,6 @@ const form = reactive<FormApi>({
   ]
 })
 
-
 const groupRef = ref()
 
 function reset() {
@@ -82,13 +80,13 @@ function reset() {
 }
 
 async function submit() {
- groupRef.value.validate((valid: boolean) => {
-  if (valid) {
-    console.log(form.data)
-  } else {
-    console.log(valid)
-  }
- })
+  groupRef.value.validate((valid: boolean) => {
+    if (valid) {
+      console.log(form.data)
+    } else {
+      console.log(valid)
+    }
+  })
 }
 </script>
 

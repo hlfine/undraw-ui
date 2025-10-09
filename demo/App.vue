@@ -1,5 +1,5 @@
 <template>
-  <el-config-provider :locale="locale">
+  <el-config-provider :locale="zhCn">
     <Page />
   </el-config-provider>
 </template>
@@ -7,7 +7,6 @@
 import Page from './layouts/page.vue'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
-const locale = zhCn
 </script>
 
 

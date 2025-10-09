@@ -1,5 +1,5 @@
 <template>
-  <el-tabs class="u-group" v-if="form.group && form.group.type == 'tabs'" v-model="form.group.value">
+  <el-tabs v-if="form.group && form.group.type == 'tabs'" v-model="form.group.value" class="u-group">
     <template v-for="(label, index) in form.group.labels" :key="index">
       <el-tab-pane :label="label" :name="label">
         <u-form ref="formRef" :form="form">
@@ -55,7 +55,9 @@ function validate(callback: (vaild: boolean, fields: any) => void) {
       const [key] = Object.entries(fields)[0]
       let form = props.form
       let item = form.items.find(e => e.prop == key)
-      form.group!.value = item?.group
+      if (form.group) {
+        form.group!.value = item?.group
+      }
     }
     callback(valid, fields)
   })
@@ -79,7 +81,7 @@ function resetFields() {
 
 defineExpose({
   validate: validate,
-  resetFields: resetFields,
+  resetFields: resetFields
 })
 </script>
 

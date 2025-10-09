@@ -1,5 +1,5 @@
 <template>
-  <u-editor ref="editorRef" v-model="content" placeholder="请输入内容" style="width: 400px">
+  <u-editor ref="editorRef" v-model="content" placeholder="请输入内容" style="width: 400px; max-height: 150px;">
     <template #footer>
       <div class="u-footer">
         <div class="left"><u-emoji :emoji="emoji" @add-emoji="(val: string) => editorRef?.addText(val)"></u-emoji></div>

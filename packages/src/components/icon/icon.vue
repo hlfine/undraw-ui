@@ -1,5 +1,5 @@
 <template>
-  <i class="u-icon" :style="style">
+  <i class="u-icon" :style="style" :title="title">
     <slot v-if="$slots.default" />
     <svg v-else aria-hidden="true">
       <use :xlink:href="name"></use>
@@ -19,6 +19,7 @@ interface Props {
   name?: string
   size?: string | number
   color?: string
+  title?: string
 }
 
 const props = defineProps<Props>()

@@ -6,7 +6,7 @@
     </template>
     <!-- el-select -->
     <template v-if="item.component.name == 'el-select'">
-      <el-select v-model="data[item.prop]" clearable :style="{ width: toPx(item.component.width) }" :placeholder="item.component.placeholder || `请选择${item.label}`" v-bind="item.component">
+      <el-select v-model="data[item.prop]" :style="{ width: toPx(item.component.width) }" :placeholder="item.component.placeholder || `请选择${item.label}`" v-bind="item.component" v-on="item.event || {}">
         <el-option v-for="e in convertOptions(item.component.options)" :key="e.value" :label="e.label" :value="e.value">
           <div v-if="item.component.showValue" style="display: flex; justify-content: space-between; margin-right: 5px;">
             <span>{{ e.label }}</span>

@@ -13,12 +13,12 @@
         <el-tag v-if="row.role == item.value" :type="item.type">{{ item.label }}</el-tag>
       </template>
     </template>
-    <!-- <template #form-role="{ item, data }">
+    <template #form-role="{ item, data }">
       <el-radio-group v-model="data.role">
         <el-radio value="user" size="small">用户</el-radio>
         <el-radio value="admin" size="small">管理员</el-radio>
       </el-radio-group>
-    </template> -->
+    </template>
   </u-crud>
 </template>
 <script setup lang="ts">
@@ -93,15 +93,20 @@ const table = reactive<TableApi>({
   refresh: refresh
 })
 
-
-
 const crud = reactive<CrudApi>({
+  disable: {
+    save: true,
+    update: true,
+  },
   beforeSave: () => {
     form.data.username = new Time().value
+    console.log(form)
   },
   save: (val, done) => {
     console.log('save', val)
-    done()
+    setTimeout(() => {
+      done()
+    }, 1000)
   },
   update: (val, done) => {
     console.log('update', val)
@@ -109,6 +114,7 @@ const crud = reactive<CrudApi>({
   },
   beforeUpdate: (val: any) => {
     console.log('before-update', val)
+    console.log(form)
   },
   remove: (val, done) => {
     console.log(val)
@@ -117,8 +123,7 @@ const crud = reactive<CrudApi>({
 })
 
 const form = reactive<FormApi>({
-  data: {
-  },
+  data: {},
   group: {
     type: 'collapse',
     labels: ['基础信息', '详细信息']
@@ -129,7 +134,7 @@ const form = reactive<FormApi>({
       prop: 'username',
       required: true,
       component: {
-        name: 'el-input',
+        name: 'el-input'
       },
       group: '基础信息'
     },
@@ -203,7 +208,6 @@ function refresh(done: () => void, current: number, size: number, sort: any) {
 // <-
 
 const download = throttle(() => {}, 1000)
-
 </script>
 
 <style lang="scss" scoped>
@@ -218,5 +222,4 @@ const download = throttle(() => {}, 1000)
     grid-column: 1 / -1;
   }
 }
-
 </style>
