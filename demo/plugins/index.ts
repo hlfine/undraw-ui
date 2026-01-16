@@ -1,8 +1,8 @@
 import { App } from 'vue'
-import { animate } from './directives'
+import { animation } from './directives'
 
 export default {
   install: (app: App<Element>) => {
-    app.directive('animate', animate)
+    app.directive('animation', animation)
   }
 }

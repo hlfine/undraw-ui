@@ -103,10 +103,7 @@ function remoteSearch(val: string, done: (arg: any[]) => void) {
     return
   }
   setTimeout(() => {
-    // done(states.filter(e => e.toLowerCase().includes(val.toLowerCase())))
-    let arr = options.filter(e => e.value.includes(val) || e.path.includes(val))
-    console.log(arr, val)
-    done(arr)
+    done(states.filter(e => e.toLowerCase().includes(val.toLowerCase())))
     console.log('keyword:', keyword.value)
   }, 200)
 }

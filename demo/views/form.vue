@@ -9,6 +9,9 @@
     <template #form-allUser="{ item, data }">
       <el-switch v-model="data.allUser" />
     </template>
+    <template #form-age="{ data }">
+      <el-input-number v-model="data.age" :precision="2" :step="0.1" :max="10" />
+    </template>
     <div class="submit">
       <el-button type="primary" @click="submit">提交</el-button>
       <el-button @click="reset">重置</el-button>
@@ -99,10 +102,7 @@ const form = reactive<FormApi>({
     {
       label: '年龄',
       prop: 'age',
-      value: 0,
-      component: {
-        name: 'el-input'
-      }
+      value: 0
     },
     {
       label: '日期',

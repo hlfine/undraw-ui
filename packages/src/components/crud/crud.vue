@@ -64,19 +64,21 @@
         </el-tooltip>
       </div>
     </div>
-    <u-table
-      ref="tableRef"
-      :table="table"
-      :max-height="maxHeight"
-      @on-selection="val => (state.selections = val)"
-      @input-blur="val => $emit('inputBlur', val)"
-      @sort-change="sortChange"
-      @row-click="(row: any, column: any, event: Event) => ($emit('rowClick', row, column, event))"
-    >
-      <template v-for="(item, index) in table.columns" :key="index" #[`table-${item.prop}`]="v">
-        <slot :name="`table-${item.prop}`" v-bind="v"></slot>
-      </template>
-    </u-table>
+    <el-scrollbar>
+      <u-table
+        ref="tableRef"
+        :table="table"
+        :max-height="maxHeight"
+        @on-selection="val => (state.selections = val)"
+        @input-blur="val => $emit('inputBlur', val)"
+        @sort-change="sortChange"
+        @row-click="(row: any, column: any, event: Event) => ($emit('rowClick', row, column, event))"
+      >
+        <template v-for="(item, index) in table.columns" :key="index" #[`table-${item.prop}`]="v">
+          <slot :name="`table-${item.prop}`" v-bind="v"></slot>
+        </template>
+      </u-table>
+    </el-scrollbar>
     <u-dialog v-model="visible.form" :title="state.title">
       <u-group v-if="form" ref="groupRef" :form="form">
         <template v-for="(item, index) in form.items" :key="index" #[`form-${item.prop}`]="v">
@@ -96,7 +98,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, provide, reactive, ref } from 'vue'
 import { UTable, UGroup, UDialog, FormApi, TableApi, debounce, throttle, mergeObject } from 'undraw-ui'
-import { ElMessageBox, ElButton, ElTooltip } from 'element-plus'
+import { ElMessageBox, ElButton, ElTooltip, ElScrollbar} from 'element-plus'
 import { cloneDeep } from '~/util'
 
 defineOptions({
@@ -121,7 +123,8 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   crud: () => ({}),
-  form: {} as any
+  form: {} as any,
+  maxHeight: 800
 })
 
 const searchVisible = ref(true)
@@ -164,10 +167,10 @@ const update = (val: any) => {
   visible.form = true
   state.btnLoading = false
   nextTick(() => {
-    props.form!.data = cloneDeep(val)
     props.form.type = 'update'
-    crud.beforeUpdate && crud.beforeUpdate(val)
     groupRef.value.resetFields()
+    props.form!.data = cloneDeep(val)
+    crud.beforeUpdate && crud.beforeUpdate(val)
   })
 }
 
@@ -254,6 +257,7 @@ defineExpose({
   }
   .u-table {
     flex: 1;
+    margin-right: 10px;
   }
 }
 </style>

@@ -1,26 +1,11 @@
 <template>
   <div class="u-fold">
-    <!-- over-hidden -->
     <div ref="textBox" class="txt-box" :class="{ 'over-hidden': fold }">
-      <div ref="divBox">
-        <el-button
-          v-if="isOver && unfold && position == 'right'"
-          @click="fold = !fold"
-          :class="{ 'over-hidden': fold, 'end-btn': 1 }"
-          type="primary"
-          plain
-          link
-        >
+      <div class="txt-content" ref="divBox">
+        <slot></slot>
+        <el-button :class="[ position == 'right' ? 'right': 'left', 'txt-btn']" v-if="isOver && unfold" @click="fold = !fold" type="primary" plain link>
           {{ fold ? $u('fold.unfold') : $u('fold.fold') }}
         </el-button>
-        <slot></slot>
-      </div>
-    </div>
-    <div class="action-box select-none">
-      <div v-if="isOver && unfold && position == 'left'" class="expand-btn" @click="fold = !fold">
-        <slot name="expand" :fold="fold">
-          <el-button type="primary" plain link>{{ fold ? $u('fold.unfold') : $u('fold.fold') }}</el-button>
-        </slot>
       </div>
     </div>
   </div>
@@ -81,6 +66,6 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 @use './fold.scss' with (
-  $line: v-bind(line)
+  $line: v-bind(line),
 );
 </style>

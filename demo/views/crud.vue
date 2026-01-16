@@ -1,5 +1,5 @@
 <template>
-  <u-crud ref="crudRef" :table="table" :crud="crud" :form="form" max-height="800">
+  <u-crud ref="crudRef" :table="table" :crud="crud" :form="form">
     <template #query>
       <!-- <Query v-model="query" :allergen="form.options['allergen'] || []" @submit="_submit" /> -->
     </template>

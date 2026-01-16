@@ -21,7 +21,7 @@ export interface CommentApi {
   content: string
   address?: string
   likes?: number
-  createTime: string
+  createTime: any
   user: {
     username: string
     avatar: string

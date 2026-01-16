@@ -12,6 +12,8 @@
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
+    "noUnusedLocals": false, /* 检查未使用的变量 */
+    "noUnusedParameters": false,/* 检查未使用的函数参数 */
     "types": ["vite/client"],
     // 设置解析非相对模块名称的基本目录
     "baseUrl": "./",

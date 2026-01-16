@@ -1,4 +1,4 @@
-export const animate = {
+export const animation = {
   mounted(el: Element, binding: any) {
     // 聚焦元素
     binding.addClass = () => {
@@ -7,6 +7,7 @@ export const animate = {
       // 获取元素可视区域的高度
       const h = document.documentElement.clientHeight || document.body.clientHeight
       if (top < h) {
+        // v-animation="binding.value"
         el.classList.add(binding.value)
         if (binding.addClass) {
           window.removeEventListener('scroll', binding.addClass)
